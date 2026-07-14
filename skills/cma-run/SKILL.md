@@ -63,6 +63,13 @@ continuation script that embeds the saved task-graph JSON as a literal
 `(async function(agent,parallel,pipeline,phase,log,args,budget,workflow){...})`,
 and launch that script. (lessons-core lesson 24.)
 
+**Task-graph extraction MUST be done with Node (UTF-8), never PowerShell text
+plumbing** (`Get-Content`/`ConvertTo-Json`/`WriteAllText`): PowerShell mojibakes
+non-ASCII plan content (e.g. Hebrew) into cp1252 garbage containing C1 control
+bytes, which corrupts the plan and trips the harness's control-character gate
+at launch (seen 2026-07-14). Read the workflow output and write the graph via
+`node -e` / a Node build script end-to-end.
+
 The workflow runs tasks sequentially in dependency-batch order; for each task Sonnet implements it and Opus adversarially verifies it (one retry on failure). It stops if a task can't pass verification after a retry.
 
 ### 4. REPORT + DEPLOY
