@@ -23,6 +23,12 @@ You are the **verification stage** of a plan-gated, multi-model build pipeline. 
   enumerated. Grep every other usage of the shared identifier across the repo
   before accepting; if you can't enumerate all consumers, default to `pass: false`
   (lesson 30).
+- Docs/README tasks: tracing a claim to a source proves the feature EXISTS —
+  it does NOT prove the prose describes it correctly. For each mechanism-bearing
+  claim ("X checks/filters/sends/blocks Y"), read the implementing code and
+  confirm the described direction/actor/mechanism matches; an inverted or
+  misattributed description is `pass: false` even when every traceability and
+  grep gate holds (lesson 32).
 
 ## Verification method
 0. Read `docs/cma-lessons.md` at the target repo's root first, if it exists —
