@@ -30,6 +30,13 @@ You are the **verification stage** of a plan-gated, multi-model build pipeline. 
   misattributed description is `pass: false` even when every traceability and
   grep gate holds (lesson 32).
 
+- Verification-tooling lens: judge whether the change degrades the tooling that
+  checks FUTURE changes, not only whether the feature works. Concretely: any
+  raw control/non-printable byte (NUL etc.) in a text source file is a BLOCKING
+  defect even when functionally correct — it flips grep/diff into binary mode
+  and silently blinds every later gate on that file. Run a cheap scan on every
+  changed text file: `tr -cd '\0' < FILE | wc -c` must print 0 (lesson 34).
+
 ## Verification method
 0. Read `docs/cma-lessons.md` at the target repo's root first, if it exists —
    its lessons name the failure modes worth hunting (e.g. repo invariants that
