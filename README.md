@@ -48,11 +48,17 @@ and workflows + lessons seed → `~/.claude/cma/` — making `/cma-run` and
 `@agent-cma-*` available in every project. Re-run the installer after `git pull`
 to update.
 
+While an execute run is live, `node ~/.claude/cma/tools/cma-dashboard.js` (run it
+from the project repo so the task graph is auto-found) serves a self-refreshing
+mission-control page at <http://localhost:47613>: per-task status, the live
+agent's recent tool calls, and every verifier problem note as it lands.
+
 ## Layout
 
 ```
 agents/       cma-planner · cma-executor · cma-verifier · cma-learner
 workflows/    cma-plan.js · cma-execute.js · cma-learn.js
+tools/        cma-dashboard.js   (live mission-control page for a running execute)
 skills/       cma-run/SKILL.md   (the /cma-run launcher)
 docs/         automation.md (how it works) · lessons-core.md (generic practice seed)
 install.ps1   Windows installer
