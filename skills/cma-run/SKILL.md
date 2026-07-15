@@ -72,6 +72,13 @@ at launch (seen 2026-07-14). Read the workflow output and write the graph via
 
 The workflow runs tasks sequentially in dependency-batch order; for each task Sonnet implements it and Opus adversarially verifies it (one retry on failure). It stops if a task can't pass verification after a retry.
 
+**At execute launch, also start the live dashboard** so the user can watch the
+run: from the project repo, run in the background
+`node <HOME>\.claude\cma\tools\cma-dashboard.js` and tell the user to open
+<http://localhost:47613>. It is read-only (localhost-only), auto-discovers the
+newest run journal, and auto-loads the repo's newest
+`docs/plans/*task-graph*.json` for task titles/batches.
+
 ### 4. REPORT + DEPLOY
 Summarize per task: `done/verified` or `blocked/failed`, with the evidence Opus reported. Executors/verifiers never run `git commit`, `git push`, or any deploy command — the orchestrator (you) owns deployment after every verified run:
 1. Before doing anything else, independently re-scan every verifier `problems` entry yourself, even ones marked non-blocking/accept — a defect can be real and still get an "accept". Fix anything you find before committing.

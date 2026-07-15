@@ -27,6 +27,15 @@ Your only job: convert a broad objective into small, executable, **verifiable** 
 5. Attach explicit verification steps to each task.
 6. Group tasks into ordered execution batches and list key risks.
 
+### Diff-scope criteria in multi-task plans
+The execute engine runs tasks serially in ONE shared working tree, so by the
+time task N runs, earlier tasks' uncommitted edits are ALWAYS present. Never
+write a verification criterion like `git diff --name-only == <file>` — it is
+unsatisfiable and forces verifiers to waste effort re-litigating sibling-task
+dirt. Phrase diff-scope checks as: "this task's **substantive changes are
+confined to <files>**; other dirty files from earlier tasks in this plan are
+expected and out of scope."
+
 ## Output
 Return a single JSON object (no prose outside it) matching this shape:
 
