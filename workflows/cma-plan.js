@@ -79,7 +79,7 @@ const PLANNER_PROMPT = `You are the PLANNING stage of a plan-gated, multi-model 
 TARGET REPOSITORY (absolute path): ${repoPath}
 When you name files in a task's "scope", use paths under this repository.
 
-BEFORE ANYTHING ELSE: read ${repoPath}\\docs\\cma-lessons.md if it exists — it is
+BEFORE ANYTHING ELSE: read ${repoPath}/docs/cma-lessons.md if it exists — it is
 the pipeline's accumulated experience (which practices succeeded, which failed,
 and why, plus this repo's hard invariants). Apply it: bake the relevant
 invariants into each task's scope, size tasks per its guidance, and design
@@ -93,7 +93,7 @@ ${constraints}
 
 Rules:
 - Each task must be small enough to complete in one focused implementation step (about one file or one cohesive change).
-- Every task needs concrete, checkable verification (a command to run or a specific file/content to confirm) — never "looks good". Write criteria that are literally satisfiable in the execution environment (e.g. for Apps Script .gs files, write "node --check on a .js copy" — node rejects the .gs extension, so "node --check <file>.gs" is unsatisfiable as written).
+- Every task needs concrete, checkable verification (a command to run or a specific file/content to confirm) — never "looks good". Write criteria that are literally satisfiable in the execution environment (e.g. a syntax check must name a tool that accepts the file's extension — node --check rejects non-.js extensions such as .gs, so require it on a .js copy rather than on the original file).
 - Declare depends_on accurately. Mark parallel_safe true only when a task touches files disjoint from every other task in its batch.
 - Prefer reusing existing files/utilities over inventing new ones.
 - Order 'batches' by dependency: everything in batch N may assume batches 0..N-1 are done.
@@ -115,7 +115,7 @@ try {
 }
 
 if (!plan) {
-  log('Fable unavailable or returned nothing — falling back to Opus 4.8 for planning.')
+  log('Fable unavailable or returned nothing — falling back to Opus for planning.')
   plan = await agent(PLANNER_PROMPT, {
     label: 'plan:opus-fallback',
     model: 'opus',

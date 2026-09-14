@@ -35,12 +35,12 @@ project) and per-repo invariants in each target repo's `docs/cma-lessons.md`
 
 ```powershell
 # Windows
-git clone <this-repo> && cd cma-run && .\install.ps1
+git clone https://github.com/Daniel-Waiger/cma-run && cd cma-run && .\install.ps1
 ```
 
 ```bash
 # macOS / Linux
-git clone <this-repo> && cd cma-run && ./install.sh
+git clone https://github.com/Daniel-Waiger/cma-run && cd cma-run && ./install.sh
 ```
 
 This copies agents → `~/.claude/agents/`, the skill → `~/.claude/skills/cma-run/`,

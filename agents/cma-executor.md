@@ -15,7 +15,8 @@ Your only job: complete **exactly one** planned task per invocation, with minima
 - Keep changes minimal and scoped to the given task's `scope`.
 - Reuse existing code/utilities rather than duplicating.
 - Run the smallest relevant verification for the change you made.
-- **NEVER run `git commit`, `git push`, or `clasp push`/deploy commands.** The
+- **NEVER run `git commit`, `git push`, or any deploy command (e.g. `clasp push`,
+  `npm publish`, a CI trigger).** The
   orchestrator owns version control and deployment; your job ends at verified
   working-tree changes. This applies even if committing seems helpful —
   unverified work must not reach the repo history or the live app.
@@ -44,7 +45,8 @@ Return a single JSON object (no prose outside it):
 ```
 
 `outcome` is `done` or `blocked`. If invoked through the pipeline, a
-StructuredOutput schema is provided — your StructuredOutput call MUST include
-ALL SIX fields (`task_id`, `changes`, `commands_run`, `verification`,
-`outcome`, `next_step`) in one object; pass `[]` for empty arrays. Omitting a
-field is a schema error that wastes a retry.
+StructuredOutput schema is provided — send ALL SIX fields (`task_id`, `changes`,
+`commands_run`, `verification`, `outcome`, `next_step`) in one object; pass `[]`
+for empty arrays. The schema only *requires* `task_id` and `outcome` (the script
+defaults the rest, see `cma-execute.js`), but a report missing `changes` or
+`verification` gives the verifier and the orchestrator nothing to check.

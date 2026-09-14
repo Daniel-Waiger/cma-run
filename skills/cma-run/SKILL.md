@@ -17,8 +17,8 @@ lessons seed are installed alongside it:
 - macOS/Linux: `~/.claude/cma/workflows/` and `~/.claude/cma/lessons-core.md`
 
 Call them by absolute `scriptPath` (resolve `%USERPROFILE%`/`~` to the real
-home directory first). Source of truth: the private `cma-run` GitHub repo —
-re-run its installer to update.
+home directory first). Source of truth: the `cma-run` repo at
+<https://github.com/Daniel-Waiger/cma-run> — re-run its installer to update.
 
 ## Inputs
 
@@ -31,7 +31,7 @@ Set these two variables before running:
 ## Procedure
 
 ### 0. LESSONS (once per repo)
-If `<REPO>\docs\cma-lessons.md` does not exist, create it by copying
+If `<REPO>/docs/cma-lessons.md` does not exist, create it by copying
 `~/.claude/cma/lessons-core.md` (section E starts as the empty template — the
 learner fills it with that repo's own invariants over time). All four stages
 read this file before working; the learner is the only stage that writes it.
@@ -40,11 +40,11 @@ read this file before working; the learner is the only stage that writes it.
 Invoke the plan workflow. It returns a structured task graph.
 
 > Call the `Workflow` tool with:
-> - `scriptPath`: `<HOME>\.claude\cma\workflows\cma-plan.js`
+> - `scriptPath`: `<HOME>/.claude/cma/workflows/cma-plan.js`
 > - `args`: `{ "objective": "<OBJECTIVE>", "repoPath": "<REPO>", "constraints": "<optional>" }`
 
 ### 2. GATE (human approval) — REQUIRED
-- Save the returned task graph to `<REPO>\docs\plans\<short-name>.md` (human-readable: objective, assumptions, the task table, batches, risks) plus the raw JSON alongside it.
+- Save the returned task graph to `<REPO>/docs/plans/<short-name>.md` (human-readable: objective, assumptions, the task table, batches, risks) plus the raw JSON alongside it as `<REPO>/docs/plans/<short-name>-task-graph.json`. The `task-graph` part of the name is required: the live dashboard auto-loads the newest `docs/plans/*task-graph*.json` for task titles and batches.
 - Present a concise summary of the task graph to the user.
 - **Stop and wait for explicit approval.** Do not proceed to execution until the user approves (they may edit the plan first). This is the plan-gated checkpoint — never skip it.
 
@@ -52,7 +52,7 @@ Invoke the plan workflow. It returns a structured task graph.
 Once approved, invoke the execute workflow with the approved plan.
 
 > Call the `Workflow` tool with:
-> - `scriptPath`: `<HOME>\.claude\cma\workflows\cma-execute.js`
+> - `scriptPath`: `<HOME>/.claude/cma/workflows/cma-execute.js`
 > - `args`: `{ "plan": <approved task graph object>, "repoPath": "<REPO>" }`
 
 **Large plans (roughly >15 KB of JSON): do NOT pass inline as args** — arg
@@ -68,13 +68,13 @@ plumbing** (`Get-Content`/`ConvertTo-Json`/`WriteAllText`): PowerShell mojibakes
 non-ASCII plan content (e.g. Hebrew) into cp1252 garbage containing C1 control
 bytes, which corrupts the plan and trips the harness's control-character gate
 at launch (seen 2026-07-14). Read the workflow output and write the graph via
-`node -e` / a Node build script end-to-end.
+`node -e` / a Node build script end-to-end. (lessons-core lesson 37.)
 
 The workflow runs tasks sequentially in dependency-batch order; for each task Sonnet implements it and Opus adversarially verifies it (one retry on failure). It stops if a task can't pass verification after a retry.
 
 **At execute launch, also start the live dashboard** so the user can watch the
 run: from the project repo, run in the background
-`node <HOME>\.claude\cma\tools\cma-dashboard.js` and tell the user to open
+`node <HOME>/.claude/cma/tools/cma-dashboard.js` and tell the user to open
 <http://localhost:47613>. It is read-only (localhost-only), auto-discovers the
 newest run journal, and auto-loads the repo's newest
 `docs/plans/*task-graph*.json` for task titles/batches.
@@ -83,13 +83,13 @@ newest run journal, and auto-loads the repo's newest
 Summarize per task: `done/verified` or `blocked/failed`, with the evidence Opus reported. Executors/verifiers never run `git commit`, `git push`, or any deploy command — the orchestrator (you) owns deployment after every verified run:
 1. Before doing anything else, independently re-scan every verifier `problems` entry yourself, even ones marked non-blocking/accept — a defect can be real and still get an "accept". Fix anything you find before committing.
 2. `git add`/`git commit` the verified work.
-3. Deploy is CONDITIONAL and repo-specific: use the target repo's own deploy mechanism (check its CLAUDE.md / docs — e.g. clasp push for Apps Script, npm publish, CI). Verify the deploy tool is authenticated ONCE per environment session before attempting; if it isn't, say so plainly and hand off to the user — never claim or imply a change is live when it isn't.
+3. Deploy is CONDITIONAL and repo-specific: use the target repo's own deploy mechanism (check its CLAUDE.md / docs — examples: `clasp push` for Apps Script, `npm publish`, a CI trigger; many repos have none). Verify the deploy tool is authenticated ONCE per environment session before attempting; if it isn't, say so plainly and hand off to the user — never claim or imply a change is live when it isn't.
 
 ### 5. LEARN (Opus learner) — after every execute run, pass or fail
 Invoke the learning workflow so the pipeline improves run over run.
 
 > Call the `Workflow` tool with:
-> - `scriptPath`: `<HOME>\.claude\cma\workflows\cma-learn.js`
+> - `scriptPath`: `<HOME>/.claude/cma/workflows/cma-learn.js`
 > - `args`: `{ "runReport": <the execute result PLUS your orchestrator notes — failures, schema-retry deaths, hotfixes, human interventions, not just per-task verdicts>, "repoPath": "<REPO>" }`
 
 The learner reads the target repo's `docs/cma-lessons.md`, merges in what this

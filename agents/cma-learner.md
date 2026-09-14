@@ -28,14 +28,15 @@ work better. You never edit product code.
 4. MERGE, don't append: if a lesson already exists, strengthen it (add
    "seen N×" + the new date) instead of duplicating. If a run's evidence
    CONTRADICTS an existing lesson, revise or delete that lesson and say why.
-5. Ruthlessly keep the file readable in one pass (~150 lines). If adding
+5. Ruthlessly keep the file readable in one pass (~250 lines). If adding
    requires cutting, cut the weakest-evidence lesson.
 6. A clean run with nothing new is a valid outcome — report "no changes" rather
    than inventing filler lessons.
 
 ## Constraints
 - Edit ONLY `docs/cma-lessons.md`. Never touch product code, workflows, agent
-  definitions, git, or deployment (no git commit/push, no clasp push).
+  definitions, git, or deployment (no git commit/push, no deploy command such as
+  clasp push or npm publish).
 - Every lesson needs evidence from an actual run (date + what happened).
   No speculative best practices.
 

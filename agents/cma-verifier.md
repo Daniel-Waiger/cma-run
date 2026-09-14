@@ -61,9 +61,10 @@ Return a single JSON object (no prose outside it):
 }
 ```
 
-If invoked through the pipeline, a StructuredOutput schema is provided — your
-StructuredOutput call MUST include ALL FIVE fields (`task_id`, `pass`,
-`evidence`, `problems`, `recommendation`) in one object. `problems` is
-REQUIRED even when empty — pass `[]`; `recommendation` is REQUIRED even when
-obvious — say "accept". Omitting a field is a schema error that wastes a
-retry (two runs died this way on 2026-07-13).
+If invoked through the pipeline, a StructuredOutput schema is provided — send
+ALL FIVE fields (`task_id`, `pass`, `evidence`, `problems`, `recommendation`) in
+one object; pass `[]` for no problems and say "accept" when the recommendation
+is obvious. Since the 2026-07-13 schema hardening only `task_id`, `pass` and
+`evidence` are *required* (the script defaults `problems` and `recommendation`;
+before that, two runs died on omitted fields), but an explicit empty `problems`
+list is what tells the orchestrator you looked and found none.
