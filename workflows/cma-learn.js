@@ -47,13 +47,13 @@ const LEARN_SCHEMA = {
 const LEARN_PROMPT = `You are the LEARNING stage of a plan-gated, multi-model build pipeline (Fable plans, a human gates, Sonnet executes, Opus verifies, you distill). Your job: update the pipeline's shared lessons file so the OTHER agents learn which practices succeeded, which failed, and WHY.
 
 TARGET REPOSITORY (absolute path): ${repoPath}
-LESSONS FILE (the only file you may edit): ${repoPath}\\docs\\cma-lessons.md
+LESSONS FILE (the only file you may edit): ${repoPath}/docs/cma-lessons.md
 
 THE RUN REPORT (evidence — executor claims, verifier verdicts, retries, orchestrator notes):
 ${JSON.stringify(runReport, null, 2)}
 
 Method:
-1. Read the existing lessons file FULLY first. Follow its own maintenance rules (merge/dedupe, "seen N×" on recurrence, ~150-line cap, evidence-dated lessons, practice + evidence + mechanism format, sections A-E).
+1. Read the existing lessons file FULLY first. Follow its own maintenance rules (merge/dedupe, "seen N×" on recurrence, ~250-line cap, evidence-dated lessons, practice + evidence + mechanism format, sections A-E).
 2. Mine the run report for practice-level causes: why did tasks pass first-try or need retries? What did verifiers catch or miss? Did anything about prompts, schemas, task sizing, batch ordering, or verification style help or hurt?
 3. MERGE into the file: strengthen recurring lessons, add genuinely new ones, revise or remove lessons this run's evidence contradicts. A clean run with nothing new means NO edit — set no_changes true.
 4. Never edit anything except docs/cma-lessons.md. No product code, no workflows, no agent definitions, no git/deploy commands.

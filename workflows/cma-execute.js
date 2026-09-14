@@ -2,8 +2,8 @@ export const meta = {
   name: 'cma-execute',
   description: 'CMA execute phase: for each task in an approved plan, Sonnet implements it and Opus adversarially verifies it. Sequential by dependency batch; one retry on failed verification.',
   phases: [
-    { title: 'Execute', detail: 'Sonnet 5 implements one task at a time' },
-    { title: 'Verify', detail: 'Opus 4.8 adversarially verifies each task' },
+    { title: 'Execute', detail: 'Sonnet implements one task at a time' },
+    { title: 'Verify', detail: 'Opus adversarially verifies each task' },
   ],
 }
 
@@ -76,7 +76,7 @@ function execPrompt(task, priorFeedback) {
 TARGET REPOSITORY (absolute path): ${repoPath}
 IMPORTANT: All file operations MUST be inside this repository. Use absolute paths under it. Do not touch files elsewhere.
 
-BEFORE ANYTHING ELSE: read ${repoPath}\\docs\\cma-lessons.md if it exists — it carries this repo's hard invariants (things that broke production before) and the practices that made past tasks pass verification first-try. Apply it.
+BEFORE ANYTHING ELSE: read ${repoPath}/docs/cma-lessons.md if it exists — it carries this repo's hard invariants (things that broke production before) and the practices that made past tasks pass verification first-try. Apply it.
 
 TASK ${task.id}: ${task.title}
 Scope: ${task.scope}
@@ -96,7 +96,7 @@ function verifyPrompt(task, exec) {
 
 TARGET REPOSITORY (absolute path): ${repoPath}
 
-BEFORE ANYTHING ELSE: read ${repoPath}\\docs\\cma-lessons.md if it exists — its lessons name the failure modes worth hunting (repo invariants that static checks miss) and the verification styles that caught real defects (concrete adversarial traces, truth tables, byte-identical regression diffs, runtime harnesses for arithmetic).
+BEFORE ANYTHING ELSE: read ${repoPath}/docs/cma-lessons.md if it exists — its lessons name the failure modes worth hunting (repo invariants that static checks miss) and the verification styles that caught real defects (concrete adversarial traces, truth tables, byte-identical regression diffs, runtime harnesses for arithmetic).
 
 TASK ${task.id}: ${task.title}
 Scope: ${task.scope}
@@ -109,12 +109,12 @@ The executor reported:
 
 Do NOT trust that report. Independently inspect the actual files under ${repoPath} and run the relevant check yourself. Set pass=false if the criteria are not genuinely met, if files are missing/wrong, or if you are uncertain.
 
-Report via the structured output. Your StructuredOutput call MUST include ALL FIVE fields in one object — omitting any of them is a schema error that wastes a retry:
+Report via the structured output. Send ALL FIVE fields in one object (the schema requires task_id, pass and evidence; the script defaults problems to [] and recommendation to "accept" or "see problems/evidence" if omitted, but always send them so the report is self-contained):
 - task_id (string): "${task.id}"
 - pass (boolean)
 - evidence (string): what you inspected and what you found
-- problems (array of strings): REQUIRED even when empty — pass [] when there are no problems
-- recommendation (string): REQUIRED — e.g. "accept" when passing, or the one-line fix when failing`
+- problems (array of strings): pass [] when there are no problems
+- recommendation (string): e.g. "accept" when passing, or the one-line fix when failing`
 }
 
 // ---- Normalizers: default any schema-optional field the model omitted --------
