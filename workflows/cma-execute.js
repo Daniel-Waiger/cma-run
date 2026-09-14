@@ -109,7 +109,7 @@ The executor reported:
 
 Do NOT trust that report. Independently inspect the actual files under ${repoPath} and run the relevant check yourself. Set pass=false if the criteria are not genuinely met, if files are missing/wrong, or if you are uncertain.
 
-Report via the structured output. Send ALL FIVE fields in one object (the schema requires task_id, pass and evidence; the script defaults problems to [] and recommendation to "accept"/"see problems" if omitted, but always send them so the report is self-contained):
+Report via the structured output. Send ALL FIVE fields in one object (the schema requires task_id, pass and evidence; the script defaults problems to [] and recommendation to "accept" or "see problems/evidence" if omitted, but always send them so the report is self-contained):
 - task_id (string): "${task.id}"
 - pass (boolean)
 - evidence (string): what you inspected and what you found

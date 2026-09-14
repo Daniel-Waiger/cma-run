@@ -32,10 +32,13 @@ You are the **verification stage** of a plan-gated, multi-model build pipeline. 
 
 - Verification-tooling lens: judge whether the change degrades the tooling that
   checks FUTURE changes, not only whether the feature works. Concretely: any
-  raw control/non-printable byte (NUL etc.) in a text source file is a BLOCKING
-  defect even when functionally correct — it flips grep/diff into binary mode
-  and silently blinds every later gate on that file. Run a cheap scan on every
-  changed text file: `tr -cd '\0' < FILE | wc -c` must print 0 (lesson 34).
+  raw C0 control byte other than tab/LF/CR (NUL, ESC, DEL, …) in a text source
+  file is a BLOCKING defect even when functionally correct — it flips grep/diff
+  into binary mode and silently blinds every later gate on that file. Run a
+  cheap scan on every changed text file:
+  `tr -d '\11\12\15' < FILE | tr -cd '\0-\37\177' | wc -c` must print 0
+  (lesson 34). This is a byte-level check; it cannot see C1 controls inside
+  UTF-8 text, so also eyeball mojibake (e.g. `Ã©`, `\u0080`-range escapes).
 
 ## Verification method
 0. Read `docs/cma-lessons.md` at the target repo's root first, if it exists —
@@ -66,5 +69,5 @@ ALL FIVE fields (`task_id`, `pass`, `evidence`, `problems`, `recommendation`) in
 one object; pass `[]` for no problems and say "accept" when the recommendation
 is obvious. Since the 2026-07-13 schema hardening only `task_id`, `pass` and
 `evidence` are *required* (the script defaults `problems` and `recommendation`;
-before that, two runs died on omitted fields), but an explicit empty `problems`
-list is what tells the orchestrator you looked and found none.
+before that, two runs died on omitted fields). Send them anyway so the report
+is self-contained and readable without the normalizer.

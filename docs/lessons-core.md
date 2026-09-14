@@ -164,13 +164,16 @@ Format per lesson: **practice — evidence — why it matters.**
     description is `pass: false` even when every symbol resolves. — Grep proves
     a name is real; only reading the code proves the sentence about it is true.
 34. **Judge whether a change degrades the tooling that checks FUTURE changes,
-    not only whether the feature works: any raw control/non-printable byte (NUL
-    etc.) in a text source file is a BLOCKING defect even when functionally
-    correct.** — 2026-07-14: a text file that gained control bytes flipped
-    grep/diff into binary mode and silently blinded every later gate on it; the
-    verifier now runs `tr -cd '\0' < FILE | wc -c` (must print 0) on every
-    changed text file. — A gate that stops reading a file stops catching
-    anything in it; verification tooling is part of the product surface.
+    not only whether the feature works: any raw C0 control byte other than
+    tab/LF/CR (NUL, ESC, DEL, …) in a text source file is a BLOCKING defect even
+    when functionally correct.** — 2026-07-14: a text file that gained control
+    bytes flipped grep/diff into binary mode and silently blinded every later
+    gate on it; the verifier now runs
+    `tr -d '\11\12\15' < FILE | tr -cd '\0-\37\177' | wc -c` (must print 0)
+    on every changed text file. The check is byte-level: it cannot see C1
+    controls embedded in UTF-8 text, so mojibake still needs a visual pass
+    (lesson 37). — A gate that stops reading a file stops catching anything in
+    it; verification tooling is part of the product surface.
 
 ## D. Pipeline discipline
 
